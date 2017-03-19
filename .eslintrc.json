@@ -1,0 +1,48 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 8,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "import"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "no-console": "warn",
+    "max-len": ["warn", 80, {"ignoreUrls": true, "ignoreRegExpLiterals": true}],
+    "semi": "error",
+    "quotes": ["error", "single"],
+    "indent": ["error", 2, {"SwitchCase": 1}],
+    "comma-spacing": ["error", {"before": false, "after": true}],
+    "space-infix-ops": "error",
+    "key-spacing": ["error"],
+    "space-unary-ops": ["error", {"nonwords": true}],
+    "prefer-arrow-callback": "error",
+    "comma-dangle": ["error", "always-multiline"],
+    "array-bracket-spacing": ["error", "never"],
+    "object-curly-spacing": ["error", "never"],
+    "prefer-const": ["error", {"destructuring": "all"}],
+    "quote-props": ["error", "consistent-as-needed"],
+    "no-useless-concat": "error",
+    "eol-last": ["error", "always"],
+    "no-multiple-empty-lines": "error",
+    "no-case-declarations": "error",
+    "no-fallthrough": "error",
+    "no-unused-vars": ["error", {"args": "none"}],
+    "arrow-parens": ["error", "as-needed", { "requireForBlockBody": true }],
+    "import/no-unresolved": ["error", {"ignore": ["^meteor/"]}],
+    "import/first": "error",
+    "import/no-duplicates": "error",
+    "import/extensions": "error",
+    "import/order": "error",
+    "import/newline-after-import": "error"
+  }
+}

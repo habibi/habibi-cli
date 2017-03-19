@@ -1,0 +1,31 @@
+{
+  "name": "habibi",
+  "version": "1.0.0",
+  "description": "Habibi CLI",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "npm run build && node dest/index.js",
+    "build": "babel src -d dest",
+    "lint": "eslint . || true",
+    "postinstall": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lirbank/habibi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lirbank/habibi/issues"
+  },
+  "homepage": "https://github.com/lirbank/habibi#readme",
+  "dependencies": {
+    "babel-cli": "^6.24.0",
+    "babel-plugin-transform-class-properties": "^6.23.0",
+    "babel-preset-env": "^1.2.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.18.0",
+    "eslint-plugin-import": "^2.2.0"
+  }
+}
