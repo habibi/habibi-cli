@@ -8,8 +8,8 @@
     "habibi": "bin/habibi.js"
   },
   "scripts": {
-    "watch": "babel src -d dest --watch",
-    "build": "babel src -d dest",
+    "watch": "babel src -d dist --watch",
+    "build": "babel src -d dist",
     "lint": "eslint . || true",
     "postinstall": "npm run build"
   },
