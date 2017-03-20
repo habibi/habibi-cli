@@ -4,8 +4,11 @@
   "description": "Habibi CLI",
   "main": "index.js",
   "private": true,
+  "bin": {
+    "habibi": "bin/habibi.js"
+  },
   "scripts": {
-    "start": "npm run build && node dest/index.js",
+    "watch": "babel src -d dest --watch",
     "build": "babel src -d dest",
     "lint": "eslint . || true",
     "postinstall": "npm run build"
