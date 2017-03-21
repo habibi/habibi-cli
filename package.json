@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lirbank/habibi.git"
+    "url": "git+https://github.com/habibi/habibi.git"
   },
   "bugs": {
-    "url": "https://github.com/lirbank/habibi/issues"
+    "url": "https://github.com/habibi/habibi/issues"
   },
-  "homepage": "https://github.com/lirbank/habibi#readme",
+  "homepage": "https://github.com/habibi/habibi#readme",
   "dependencies": {
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-class-properties": "^6.23.0",
