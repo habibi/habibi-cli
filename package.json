@@ -2,7 +2,6 @@
   "name": "habibi",
   "version": "0.0.1",
   "description": "Habibi CLI",
-  "main": "index.js",
   "license": "MIT",
   "bin": {
     "habibi": "bin/habibi.js"
