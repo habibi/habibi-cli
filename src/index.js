@@ -1,28 +1,35 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
-import request from 'request-promise-native';
+import {argv} from 'yargs';
+import push from './push';
+import pull from './pull';
+import login from './login';
+import notImplemented from './not-implemented';
 
-const [, , command = ''] = process.argv;
+switch (argv._[0]) {
+  case 'push':
+    push();
+    break;
 
-if (command.toLowerCase() !== 'push' && command.toLowerCase() !== 'pull') {
-  // eslint-disable-next-line no-console
-  console.error('Usage: habibi push|pull');
-  process.exit(1);
+  case 'pull':
+    pull();
+    break;
+
+  case 'init':
+    notImplemented();
+    break;
+
+  case 'signin':
+    notImplemented();
+    break;
+
+  case 'login':
+    login();
+    break;
+
+  case 'logout':
+    notImplemented();
+    break;
+
+  default:
+    // eslint-disable-next-line no-console
+    console.error('Usage: habibi push|pull|login');
 }
-
-const file = fs.readFileSync(path.resolve(os.homedir(), 'habibi'));
-const [username, password] = file.toString().trim().split('\n').map(
-  e => e.trim());
-
-const options = {
-  uri: 'http://localhost:3000/',
-  headers: {
-    username: username,
-    password: password,
-  },
-};
-
-request(options).then((html) => {
-  console.log(html);
-});
