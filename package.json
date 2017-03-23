@@ -21,11 +21,11 @@
   },
   "homepage": "https://github.com/habibi/habibi#readme",
   "dependencies": {
+    "apollo-client": "^1.0.0-rc.6",
     "babel-cli": "^6.24.0",
     "babel-plugin-transform-class-properties": "^6.23.0",
     "babel-preset-env": "^1.2.2",
-    "request": "^2.81.0",
-    "request-promise-native": "^1.0.3",
+    "isomorphic-fetch": "^2.2.1",
     "yargs": "^7.0.2"
   },
   "devDependencies": {

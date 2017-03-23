@@ -1,3 +1,4 @@
+import 'isomorphic-fetch';
 import {argv} from 'yargs';
 import push from './push';
 import pull from './pull';

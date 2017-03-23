@@ -1,17 +1,20 @@
-import request from 'request-promise-native';
+import gql from 'graphql-tag';
+import graphql from './graphql';
 
 const push = () => {
-  const options = {
-    method: 'post',
-    uri: 'http://localhost:3000/push',
-    headers: {
-      Authorization: 'Bearer 9nIjKUoSvAUEUm2n1XZ9-db7StrtnAwBZImkRK7xFMV',
-    },
-  };
+  const query = gql`
+    query {
+      user {
+        id
+        email
+      }
+    }
+  `;
 
-  request(options).then((html) => {
-    // eslint-disable-next-line no-console
-    console.log(html);
+  graphql.query({
+    query: query,
+  }).then((result) => {
+    console.log(JSON.stringify(result.data, null, 2));
   });
 };
 
