@@ -3,6 +3,7 @@ import {argv} from 'yargs';
 import push from './push';
 import pull from './pull';
 import login from './login';
+import signup from './signup';
 import notImplemented from './not-implemented';
 
 switch (argv._[0]) {
@@ -18,15 +19,15 @@ switch (argv._[0]) {
     notImplemented();
     break;
 
-  case 'signin':
-    notImplemented();
+  case 'signup':
+    signup();
     break;
 
-  case 'login':
+  case 'signin':
     login();
     break;
 
-  case 'logout':
+  case 'signout':
     notImplemented();
     break;
 
