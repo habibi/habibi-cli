@@ -3,6 +3,7 @@ import prompt from 'prompt';
 import gql from 'graphql-tag';
 import graphql from './graphql';
 import RegEx from './regex';
+import {generateKeys} from './pgp';
 
 const schema = {
   properties: {
@@ -20,24 +21,47 @@ const schema = {
 
 const signup = () => {
   prompt.start();
-  prompt.get(schema, async (error, result) => {
+  prompt.get(schema, async (error, input) => {
 
     if (error) {
       throw new Error(error);
     }
 
     const salt = 'habibi';
-    const hash = crypto.pbkdf2Sync(result.password, salt, 100000, 512, 'sha512')
+    const hash = crypto.pbkdf2Sync(input.password, salt, 100000, 512, 'sha512')
       .toString('hex');
 
+    const {
+      privateKeyArmored,
+      publicKeyArmored,
+    } = await generateKeys(input.email, input.password);
+
     const mutation = gql`
-      mutation {
-        createUser(email: "${result.email}", password: "${hash}")
+      mutation (
+        $email: String!,
+        $password: String!,
+        $privateKey: String!,
+        $publicKey: String!
+      ) {
+        createUser(
+          email: $email,
+          password: $password,
+          privateKey: $privateKey,
+          publicKey: $publicKey,
+        )
       }
     `;
 
     try {
-      const result = await graphql.mutate({mutation});
+      const result = await graphql.mutate({
+        variables: {
+          email: input.email,
+          password: hash,
+          privateKey: privateKeyArmored,
+          publicKey: publicKeyArmored,
+        },
+        mutation: mutation,
+      });
       console.log(JSON.stringify(result.data, null, 2));
 
     } catch (e) {
@@ -45,6 +69,7 @@ const signup = () => {
         console.error('There is already a user with the email you provided, ' +
           'try signing in instead');
       } else {
+        console.log(e);
         console.error('Unknown error');
       }
     }
