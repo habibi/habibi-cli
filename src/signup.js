@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import prompt from 'prompt';
 import gql from 'graphql-tag';
+import netrc from 'netrc';
 import graphql from './graphql';
 import RegEx from './regex';
 import {generateKeys} from './pgp';
@@ -53,7 +54,7 @@ const signup = () => {
     `;
 
     try {
-      const result = await graphql.mutate({
+      const {data} = await graphql.mutate({
         variables: {
           email: input.email,
           password: hash,
@@ -62,7 +63,14 @@ const signup = () => {
         },
         mutation: mutation,
       });
-      console.log(JSON.stringify(result.data, null, 2));
+      console.log(JSON.stringify(data, null, 2));
+
+      const myNetrc = netrc();
+      myNetrc['habibi.one'] = {
+        login: input.email,
+        password: data.createUser,
+      };
+      netrc.save(myNetrc);
 
     } catch (e) {
       if (e.graphQLErrors && e.graphQLErrors[0].message === 'duplicate-email') {
