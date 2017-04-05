@@ -16,7 +16,7 @@
     "es6": true
   },
   "rules": {
-    "no-console": "warn",
+    "no-console": "off",
     "max-len": ["warn", 80, {"ignoreUrls": true, "ignoreRegExpLiterals": true}],
     "semi": "error",
     "quotes": ["error", "single"],
