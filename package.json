@@ -26,6 +26,7 @@
     "babel-plugin-transform-class-properties": "^6.23.0",
     "babel-preset-env": "^1.2.2",
     "isomorphic-fetch": "^2.2.1",
+    "netrc": "^0.1.4",
     "prompt": "^1.0.0",
     "yargs": "^7.0.2"
   },

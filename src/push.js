@@ -5,15 +5,12 @@ const push = () => {
   const query = gql`
     query {
       user {
-        id
         email
       }
     }
   `;
 
-  graphql.query({
-    query: query,
-  }).then((result) => {
+  graphql.query({query}).then((result) => {
     console.log(JSON.stringify(result.data, null, 2));
   });
 };

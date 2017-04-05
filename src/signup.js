@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import graphql from './graphql';
 import RegEx from './regex';
 
-var schema = {
+const schema = {
   properties: {
     email: {
       pattern: RegEx.email,
@@ -26,27 +26,25 @@ const signup = () => {
       throw new Error(error);
     }
 
-    const salt = crypto.randomBytes(512).toString('hex');
+    const salt = 'habibi';
     const hash = crypto.pbkdf2Sync(result.password, salt, 100000, 512, 'sha512')
       .toString('hex');
 
     const mutation = gql`
       mutation {
-        createUser(email: "${result.email}", hash: "${hash}", salt: "${salt}")
+        createUser(email: "${result.email}", password: "${hash}")
       }
     `;
 
     try {
-      const result = await graphql.mutate({mutation: mutation});
+      const result = await graphql.mutate({mutation});
       console.log(JSON.stringify(result.data, null, 2));
 
     } catch (e) {
       if (e.graphQLErrors && e.graphQLErrors[0].message === 'duplicate-email') {
-        // eslint-disable-next-line no-console
         console.error('There is already a user with the email you provided, ' +
           'try signing in instead');
       } else {
-        // eslint-disable-next-line no-console
         console.error('Unknown error');
       }
     }

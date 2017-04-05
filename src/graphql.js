@@ -1,6 +1,5 @@
 import ApolloClient, {createNetworkInterface} from 'apollo-client';
-
-const TOKEN = '9nIjKUoSvAUEUm2n1XZ9-db7StrtnAwBZImkRK7xFMV';
+import netrc from 'netrc';
 
 const networkInterface = createNetworkInterface({
   uri: 'http://localhost:3000/graphql',
@@ -11,7 +10,12 @@ networkInterface.use([{
     if (! req.options.headers) {
       req.options.headers = {};
     }
-    req.options.headers.authorization = `Bearer ${TOKEN}`;
+
+    // Read the API token from the netrc file
+    const myNetrc = netrc();
+    const token = myNetrc['habibi.one'].password;
+
+    req.options.headers.authorization = `Bearer ${token}`;
     next();
   },
 }]);
