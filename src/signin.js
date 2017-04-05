@@ -1,6 +1,6 @@
-const login = () => {
+const signin = () => {
   // eslint-disable-next-line no-console
   console.log('LOGIN');
 };
 
-export default login;
+export default signin;

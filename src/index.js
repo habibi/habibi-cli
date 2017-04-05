@@ -2,7 +2,7 @@ import 'isomorphic-fetch';
 import {argv} from 'yargs';
 import push from './push';
 import pull from './pull';
-import login from './login';
+import signin from './signin';
 import signup from './signup';
 import notImplemented from './not-implemented';
 
@@ -24,7 +24,7 @@ switch (argv._[0]) {
     break;
 
   case 'signin':
-    login();
+    signin();
     break;
 
   case 'signout':
@@ -33,5 +33,5 @@ switch (argv._[0]) {
 
   default:
     // eslint-disable-next-line no-console
-    console.error('Usage: habibi push|pull|login');
+    console.error('Usage: habibi push|pull|signin');
 }
