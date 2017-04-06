@@ -1,5 +1,9 @@
 import crypto from 'crypto';
-import openpgp from 'openpgp';
+import assert from 'assert';
+
+// Note, ES6 import does not work with openpgp.key.readArmored() for some reason.
+// import openpgp from 'openpgp';
+const openpgp = require('openpgp');
 
 const generateKeys = (email, passphrase) => {
   const salt = 'habibi-pgp';
@@ -15,4 +19,20 @@ const generateKeys = (email, passphrase) => {
   return openpgp.generateKey(options);
 };
 
-export {generateKeys};
+const encrypt = async ({data, publicKeys}) => {
+  assert(typeof data === 'string');
+  assert(publicKeys.length > 0);
+  assert(Array.isArray(publicKeys));
+
+  const options = {
+    data: data,     // input as String (or Uint8Array)
+    publicKeys: publicKeys.map(key => openpgp.key.readArmored(key.toString()).keys[0]),
+    // TODO: Consider signing the message
+    // privateKeys: openpgp.key.readArmored(privateKey).keys // for signing (optional)
+  };
+
+  // Returns a promise
+  return openpgp.encrypt(options);
+};
+
+export {generateKeys, encrypt};
