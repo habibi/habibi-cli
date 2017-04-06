@@ -1,16 +1,19 @@
 import gql from 'graphql-tag';
 import graphql from './graphql';
 
-const push = () => {
-  const query = gql`
-    query {
-      user {
-        email
-      }
-    }
-  `;
+const pushEnvironment = gql`
+  mutation pushEnvironment($environment: String!) {
+    push(environment: $environment)
+  }
+`;
 
-  graphql.query({query}).then((result) => {
+const push = () => {
+  graphql.mutate({
+    mutation: pushEnvironment,
+    variables: {
+      environment: 'asdasd',
+    },
+  }).then((result) => {
     console.log(JSON.stringify(result.data, null, 2));
   });
 };

@@ -1,4 +1,7 @@
 import crypto from 'crypto';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import prompt from 'prompt';
 import gql from 'graphql-tag';
 import netrc from 'netrc';
@@ -29,14 +32,23 @@ const signup = () => {
     }
 
     const salt = 'habibi';
-    const hash = crypto.pbkdf2Sync(input.password, salt, 100000, 512, 'sha512')
-      .toString('hex');
+    const hash = crypto.pbkdf2Sync(input.password, salt, 100000, 512, 'sha512').toString('hex');
 
     const {
       privateKeyArmored,
       publicKeyArmored,
     } = await generateKeys(input.email, input.password);
 
+    // Store keys locally
+    const habibiDir = path.join(os.homedir(), '.habibi');
+    if (! fs.existsSync(habibiDir)) {
+      fs.mkdirSync(habibiDir);
+    }
+    // TODO: Run these file operations in parallel
+    fs.writeFileSync(path.join(habibiDir, 'private-key'), privateKeyArmored);
+    fs.writeFileSync(path.join(habibiDir, 'public-key'), publicKeyArmored);
+
+    // Store keys remotely
     const mutation = gql`
       mutation (
         $email: String!,

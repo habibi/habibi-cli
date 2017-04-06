@@ -17,7 +17,7 @@
   },
   "rules": {
     "no-console": "off",
-    "max-len": ["warn", 80, {"ignoreUrls": true, "ignoreRegExpLiterals": true}],
+    "max-len": ["warn", 100, {"ignoreUrls": true, "ignoreRegExpLiterals": true}],
     "semi": "error",
     "quotes": ["error", "single"],
     "indent": ["error", 2, {"SwitchCase": 1}],

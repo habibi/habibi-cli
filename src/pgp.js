@@ -3,8 +3,7 @@ import openpgp from 'openpgp';
 
 const generateKeys = (email, passphrase) => {
   const salt = 'habibi-pgp';
-  const hash = crypto.pbkdf2Sync(passphrase, salt, 100000, 512, 'sha512')
-    .toString('hex');
+  const hash = crypto.pbkdf2Sync(passphrase, salt, 100000, 512, 'sha512').toString('hex');
 
   const options = {
     userIds: [{email}],
