@@ -1,15 +1,13 @@
-import crypto from 'crypto';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import prompt from 'prompt';
 import gql from 'graphql-tag';
 import netrc from 'netrc';
 import graphql from './graphql';
 import RegEx from './regex';
 import {generateKeys} from './pgp';
+import {generateSignUpHash, generatePGPHash} from './crypto';
+import {storePrivateKey, storePublicKey} from './configuration';
+import prompt from './prompt';
 
-const schema = {
+const promptSchema = {
   properties: {
     email: {
       pattern: RegEx.email,
@@ -23,16 +21,25 @@ const schema = {
   },
 };
 
-const signup = () => {
-  prompt.start();
-  prompt.get(schema, async (error, input) => {
+const signUpMutation = gql`
+  mutation signUpMutation(
+    $email: String!,
+    $password: String!,
+    $privateKey: String!,
+    $publicKey: String!
+  ) {
+    createUser(
+      email: $email,
+      password: $password,
+      privateKey: $privateKey,
+      publicKey: $publicKey,
+    )
+  }
+`;
 
-    if (error) {
-      throw new Error(error);
-    }
-
-    const salt = 'habibi';
-    const hash = crypto.pbkdf2Sync(input.password, salt, 100000, 512, 'sha512').toString('hex');
+const signup = async () => {
+  try {
+    const input = await prompt(promptSchema);
 
     const {
       privateKeyArmored,
@@ -40,60 +47,37 @@ const signup = () => {
     } = await generateKeys(input.email, input.password);
 
     // Store keys locally
-    const habibiDir = path.join(os.homedir(), '.habibi');
-    if (! fs.existsSync(habibiDir)) {
-      fs.mkdirSync(habibiDir);
-    }
-    // TODO: Run these file operations in parallel
-    fs.writeFileSync(path.join(habibiDir, 'private-key'), privateKeyArmored);
-    fs.writeFileSync(path.join(habibiDir, 'public-key'), publicKeyArmored);
+    storePrivateKey(privateKeyArmored);
+    storePublicKey(publicKeyArmored);
 
     // Store keys remotely
-    const mutation = gql`
-      mutation (
-        $email: String!,
-        $password: String!,
-        $privateKey: String!,
-        $publicKey: String!
-      ) {
-        createUser(
-          email: $email,
-          password: $password,
-          privateKey: $privateKey,
-          publicKey: $publicKey,
-        )
-      }
-    `;
+    const {data} = await graphql.mutate({
+      variables: {
+        email: input.email,
+        password: generateSignUpHash(input.password),
+        privateKey: privateKeyArmored,
+        publicKey: publicKeyArmored,
+      },
+      mutation: signUpMutation,
+    });
+    console.log(JSON.stringify(data, null, 2));
 
-    try {
-      const {data} = await graphql.mutate({
-        variables: {
-          email: input.email,
-          password: hash,
-          privateKey: privateKeyArmored,
-          publicKey: publicKeyArmored,
-        },
-        mutation: mutation,
-      });
-      console.log(JSON.stringify(data, null, 2));
+    const myNetrc = netrc();
+    myNetrc['habibi.one'] = {
+      login: input.email,
+      password: data.createUser,
+      pgpPassphrase: generatePGPHash(input.password),
+    };
+    netrc.save(myNetrc);
 
-      const myNetrc = netrc();
-      myNetrc['habibi.one'] = {
-        login: input.email,
-        password: data.createUser,
-      };
-      netrc.save(myNetrc);
-
-    } catch (e) {
-      if (e.graphQLErrors && e.graphQLErrors[0].message === 'duplicate-email') {
-        console.error('There is already a user with the email you provided, ' +
-          'try signing in instead');
-      } else {
-        console.log(e);
-        console.error('Unknown error');
-      }
+  } catch (e) {
+    if (e.graphQLErrors && e.graphQLErrors[0].message === 'duplicate-email') {
+      console.error('There is already a user with the email you provided, ' +
+        'try signing in instead');
+    } else {
+      console.error(e);
     }
-  });
+  }
 };
 
 export default signup;

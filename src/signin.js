@@ -1,9 +1,10 @@
-import crypto from 'crypto';
-import prompt from 'prompt';
 import gql from 'graphql-tag';
 import netrc from 'netrc';
 import graphql from './graphql';
 import RegEx from './regex';
+import {generateSignUpHash, generatePGPHash} from './crypto';
+// import {getPgpPassphrase, getApiToken} from './configuration';
+import prompt from './prompt';
 
 const schema = {
   properties: {
@@ -19,39 +20,38 @@ const schema = {
   },
 };
 
+const signInMutation = gql`
+  mutation signInMutation($email: String!, $password: String!) {
+    signIn(email: $email, password: $password)
+  }
+`;
+
 const signin = async () => {
-  prompt.start();
-  prompt.get(schema, async (error, input) => {
+  try {
+    const input  = await prompt(schema);
 
-    if (error) {
-      throw new Error(error);
-    }
+    const {data} = await graphql.mutate({
+      variables: {
+        email: input.email,
+        password: generateSignUpHash(input.password),
+      },
+      mutation: signInMutation,
+    });
 
-    const salt = 'habibi';
-    const hash = crypto.pbkdf2Sync(input.password, salt, 100000, 512, 'sha512')
-      .toString('hex');
+    console.log(JSON.stringify(data, null, 2));
 
-    const mutation = gql`
-      mutation {
-        signIn(email: "${input.email}", password: "${hash}")
-      }
-    `;
+    const myNetrc = netrc();
+    myNetrc['habibi.one'] = {
+      login: input.email,
+      password: data.signIn,
+      pgpPassphrase: generatePGPHash(input.password),
+    };
 
-    try {
-      const {data} = await graphql.mutate({mutation});
-      console.log(JSON.stringify(data, null, 2));
+    netrc.save(myNetrc);
 
-      const myNetrc = netrc();
-      myNetrc['habibi.one'] = {
-        login: input.email,
-        password: data.signIn,
-      };
-      netrc.save(myNetrc);
-
-    } catch (e) {
-      console.error(e);
-    }
-  });
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export default signin;

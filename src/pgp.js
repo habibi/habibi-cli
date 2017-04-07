@@ -1,38 +1,55 @@
-import crypto from 'crypto';
 import assert from 'assert';
+import {generatePGPHash} from './crypto';
+import RegEx from './regex';
 
 // Note, ES6 import does not work with openpgp.key.readArmored() for some reason.
 // import openpgp from 'openpgp';
 const openpgp = require('openpgp');
 
-const generateKeys = (email, passphrase) => {
-  const salt = 'habibi-pgp';
-  const hash = crypto.pbkdf2Sync(passphrase, salt, 100000, 512, 'sha512').toString('hex');
+// Returns a promise
+const generateKeys = (email, password) => {
+  assert(typeof email === 'string');
+  assert(typeof password === 'string');
+  assert(RegEx.email.test(email));
 
-  const options = {
+  return openpgp.generateKey({
     userIds: [{email}],
     numBits: 1024,
-    passphrase: hash,
-  };
-
-  // Returns a promise
-  return openpgp.generateKey(options);
+    passphrase: generatePGPHash(password),
+  });
 };
 
-const encrypt = async ({data, publicKeys}) => {
+// Returns a promise
+const encrypt = ({data, publicKeys}) => {
   assert(typeof data === 'string');
   assert(publicKeys.length > 0);
   assert(Array.isArray(publicKeys));
+  assert(publicKeys.length > 0);
+  assert(publicKeys.every(e => typeof e === 'string'));
 
-  const options = {
+  return openpgp.encrypt({
     data: data,     // input as String (or Uint8Array)
     publicKeys: publicKeys.map(key => openpgp.key.readArmored(key.toString()).keys[0]),
     // TODO: Consider signing the message
     // privateKeys: openpgp.key.readArmored(privateKey).keys // for signing (optional)
-  };
-
-  // Returns a promise
-  return openpgp.encrypt(options);
+  });
 };
 
-export {generateKeys, encrypt};
+// Returns a promise
+const decrypt = ({ciphertext, privateKey, password}) => {
+  assert(typeof ciphertext === 'string');
+  assert(typeof privateKey === 'string');
+  assert(typeof password === 'string');
+
+  const privateKeyObject = openpgp.key.readArmored(privateKey).keys[0];
+  privateKeyObject.decrypt(password);
+
+  return openpgp.decrypt({
+    message: openpgp.message.readArmored(ciphertext),
+    privateKey: privateKeyObject,
+    // TODO: Consider verifying the message
+    // publicKeys: openpgp.key.readArmored(pubkey).keys,    // for verification (optional)
+  });
+};
+
+export {generateKeys, encrypt, decrypt};

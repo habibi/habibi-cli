@@ -1,11 +1,7 @@
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
 import gql from 'graphql-tag';
 import graphql from './graphql';
 import {encrypt} from './pgp';
-
-const habibiDir = path.join(os.homedir(), '.habibi');
+import {getPublicKey} from './configuration';
 
 const pushEnvironment = gql`
   mutation pushEnvironment($environment: String!, $name: String!) {
@@ -14,20 +10,19 @@ const pushEnvironment = gql`
 `;
 
 const push = async () => {
-  const publicKeyArmored = fs.readFileSync(path.join(habibiDir, 'public-key'));
-  const {data} = await encrypt({data: 'Hej', publicKeys: [publicKeyArmored]});
-  console.log(data);
+  // TODO: Encrypt real data
+  const {data} = await encrypt({data: 'Hej', publicKeys: [getPublicKey()]});
 
-  graphql.mutate({
+  const result = await graphql.mutate({
     mutation: pushEnvironment,
     variables: {
       // TODO: Enable passing of user defined name
       name: 'test-name',
       environment: data,
     },
-  }).then((result) => {
-    console.log(JSON.stringify(result.data, null, 2));
   });
+
+  console.log(JSON.stringify(result.data, null, 2));
 };
 
 export default push;
