@@ -25,4 +25,9 @@ const generatePGPHash = (password) => {
   return generateHash(password, salt);
 };
 
-export {generateHash, generateSignUpHash, generatePGPHash};
+const generateRandomString = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
+
+
+export {generateHash, generateSignUpHash, generatePGPHash, generateRandomString};

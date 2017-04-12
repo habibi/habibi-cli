@@ -5,18 +5,19 @@ import pull from './pull';
 import signin from './signin';
 import signup from './signup';
 import notImplemented from './not-implemented';
+import init from './init';
 
 switch (argv._[0]) {
+  case 'init':
+    init();
+    break;
+
   case 'push':
     push();
     break;
 
   case 'pull':
     pull();
-    break;
-
-  case 'init':
-    notImplemented();
     break;
 
   case 'signup':
