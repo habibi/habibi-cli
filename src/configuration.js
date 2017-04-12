@@ -39,23 +39,27 @@ const storePublicKey = (publicKeys) => {
 // Returns a string
 const getPgpPassphrase = () => {
   const netrcData = netrc() || {};
+  netrcData['habibi.one'] = netrcData['habibi.one'] || {};
   return netrcData['habibi.one'].pgpPassphrase;
 };
 
 // Returns a string
 const getApiToken = () => {
   const netrcData = netrc() || {};
+  netrcData['habibi.one'] = netrcData['habibi.one'] || {};
   return netrcData['habibi.one'].password;
 };
 
 const storePgpPassphrase = (pgpPassphrase) => {
   const netrcData = netrc() || {};
+  netrcData['habibi.one'] = netrcData['habibi.one'] || {};
   netrcData['habibi.one'].pgpPassphrase = generatePGPHash(pgpPassphrase);
   netrc.save(netrcData);
 };
 
 const storeApiToken = (password) => {
   const netrcData = netrc() || {};
+  netrcData['habibi.one'] = netrcData['habibi.one'] || {};
   netrcData['habibi.one'].password = password;
   netrc.save(netrcData);
 };
