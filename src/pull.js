@@ -6,8 +6,8 @@ import {getPrivateKey, getPgpPassphrase} from './configuration';
 import Settings from './settings';
 
 const pullEnvironments = gql`
-  query pullEnvironments($appId: String!) {
-    environments(appId: $appId) {
+  query pullEnvironments($projectId: String!, $name: String!) {
+    environments(projectId: $projectId, name: $name) {
       name
       data
     }
@@ -20,7 +20,8 @@ const pull = async () => {
     const {data: {environments}} = await graphql.query({
       query: pullEnvironments,
       variables: {
-        appId: Settings.appId,
+        name: Settings.env.environment,
+        projectId: Settings.app.projectId,
       },
     });
 

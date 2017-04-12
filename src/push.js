@@ -6,8 +6,8 @@ import {getPublicKey} from './configuration';
 import Settings from './settings';
 
 const pushEnvironment = gql`
-  mutation pushEnvironment($environment: String!, $appId: String!, $name: String!) {
-    push(environment: $environment, appId: $appId, name: $name)
+  mutation pushEnvironment($environment: String!, $projectId: String!, $name: String!) {
+    push(environment: $environment, projectId: $projectId, name: $name)
   }
 `;
 
@@ -18,9 +18,8 @@ const push = async () => {
   const result = await graphql.mutate({
     mutation: pushEnvironment,
     variables: {
-      // TODO: Enable passing of user defined name
-      name: 'test-name',
-      appId: Settings.appId,
+      name: Settings.env.environment,
+      projectId: Settings.app.projectId,
       environment: data,
     },
   });
