@@ -3,6 +3,7 @@ import os from 'os';
 import path from 'path';
 import assert from 'assert';
 import netrc from 'netrc';
+import {generatePGPHash} from './crypto';
 
 const habibiDir = path.join(os.homedir(), '.habibi');
 
@@ -37,31 +38,27 @@ const storePublicKey = (publicKeys) => {
 
 // Returns a string
 const getPgpPassphrase = () => {
-  const netrcData = netrc();
+  const netrcData = netrc() || {};
   return netrcData['habibi.one'].pgpPassphrase;
 };
 
 // Returns a string
 const getApiToken = () => {
-  const netrcData = netrc();
+  const netrcData = netrc() || {};
   return netrcData['habibi.one'].password;
 };
 
-// const storePgpPassphrase = ({login, password, pgpPassphrase}) => {
-//   const netrcData = netrc();
-//
-//   netrcData['habibi.one'] = {
-//     login: login,
-//     password: password,
-//     pgpPassphrase: pgpPassphrase,
-//   };
-//   netrc.save(myNetrc);
-// };
+const storePgpPassphrase = (pgpPassphrase) => {
+  const netrcData = netrc() || {};
+  netrcData['habibi.one'].pgpPassphrase = generatePGPHash(pgpPassphrase);
+  netrc.save(netrcData);
+};
 
-// const storeApiToken = () => {
-//   const netrcData = netrc();
-//   return netrcData['habibi.one'].password;
-// };
+const storeApiToken = (password) => {
+  const netrcData = netrc() || {};
+  netrcData['habibi.one'].password = password;
+  netrc.save(netrcData);
+};
 
 export {
   getPrivateKey,
@@ -70,6 +67,6 @@ export {
   storePublicKey,
   getPgpPassphrase,
   getApiToken,
-  // storePgpPassphrase,
-  // storeApiToken,
+  storePgpPassphrase,
+  storeApiToken,
 };

@@ -1,9 +1,9 @@
 import gql from 'graphql-tag';
-import netrc from 'netrc';
 import graphql from './graphql';
 import RegEx from './regex';
-import {generateSignUpHash, generatePGPHash} from './crypto';
+import {generateSignUpHash} from './crypto';
 // import {getPgpPassphrase, getApiToken} from './configuration';
+import {storeApiToken, storePgpPassphrase} from './configuration';
 import prompt from './prompt';
 
 const schema = {
@@ -40,14 +40,8 @@ const signin = async () => {
 
     console.log(JSON.stringify(data, null, 2));
 
-    const myNetrc = netrc();
-    myNetrc['habibi.one'] = {
-      login: input.email,
-      password: data.signIn,
-      pgpPassphrase: generatePGPHash(input.password),
-    };
-
-    netrc.save(myNetrc);
+    storeApiToken(data.signIn);
+    storePgpPassphrase(input.password);
 
   } catch (e) {
     console.error(e);

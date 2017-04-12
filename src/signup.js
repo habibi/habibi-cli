@@ -1,10 +1,9 @@
 import gql from 'graphql-tag';
-import netrc from 'netrc';
 import graphql from './graphql';
 import RegEx from './regex';
 import {generateKeys} from './pgp';
-import {generateSignUpHash, generatePGPHash} from './crypto';
-import {storePrivateKey, storePublicKey} from './configuration';
+import {generateSignUpHash} from './crypto';
+import {storePrivateKey, storePublicKey, storeApiToken, storePgpPassphrase} from './configuration';
 import prompt from './prompt';
 
 const promptSchema = {
@@ -46,11 +45,11 @@ const signup = async () => {
       publicKeyArmored,
     } = await generateKeys(input.email, input.password);
 
-    // Store keys locally
+    // Store PGP keys locally
     storePrivateKey(privateKeyArmored);
     storePublicKey(publicKeyArmored);
 
-    // Store keys remotely
+    // Store PGP keys remotely
     const {data} = await graphql.mutate({
       variables: {
         email: input.email,
@@ -62,13 +61,8 @@ const signup = async () => {
     });
     console.log(JSON.stringify(data, null, 2));
 
-    const myNetrc = netrc();
-    myNetrc['habibi.one'] = {
-      login: input.email,
-      password: data.createUser,
-      pgpPassphrase: generatePGPHash(input.password),
-    };
-    netrc.save(myNetrc);
+    storeApiToken(data.createUser);
+    storePgpPassphrase(input.password);
 
   } catch (e) {
     if (e.graphQLErrors && e.graphQLErrors[0].message === 'duplicate-email') {
