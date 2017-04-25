@@ -13,11 +13,11 @@ switch (argv._[0]) {
     break;
 
   case 'push':
-    push();
+    push({environmentName: argv._[1]});
     break;
 
   case 'pull':
-    pull();
+    pull({environmentName: argv._[1]});
     break;
 
   case 'signup':

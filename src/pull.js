@@ -6,7 +6,7 @@ import {getPrivateKey, getPgpPassphrase} from './configuration';
 import Settings from './settings';
 
 const pullEnvironments = gql`
-  query pullEnvironments($projectId: String!, $name: String!) {
+  query pullEnvironments($projectId: String!, $name: String) {
     environments(projectId: $projectId, name: $name) {
       name
       data
@@ -14,16 +14,22 @@ const pullEnvironments = gql`
   }
 `;
 
-const pull = async () => {
+const pull = async ({environmentName}) => {
   try {
     // Retrieve the encrypted data
     const {data: {environments}} = await graphql.query({
       query: pullEnvironments,
       variables: {
-        name: Settings.env.environment,
+        name: environmentName,
         projectId: Settings.app.projectId,
       },
     });
+
+    if (environments.length > 1) {
+      console.log('You have to provide a environment name. Available names are:',
+        environments.map(e => e.name).join(' '));
+      return;
+    }
 
     // Decode the data
     const {data: envFile} = await decrypt({
