@@ -6,40 +6,67 @@ import {getPrivateKey, getPgpPassphrase} from './configuration';
 import Settings from './settings';
 
 const pullEnvironments = gql`
-  query pullEnvironments($projectId: String!, $name: String) {
-    environments(projectId: $projectId, name: $name) {
+  query pullEnvironments($projectId: String!) {
+    environments(projectId: $projectId) {
       name
       data
     }
   }
 `;
 
-const pull = async ({environmentName}) => {
+const decryptAndStore = async (ciphertext, fileName) => {
+  const {data: envFile} = await decrypt({
+    ciphertext: ciphertext,
+    privateKey: getPrivateKey(),
+    password: getPgpPassphrase(),
+  });
+
+  // Store the data to the local file
+  fs.writeFileSync(fileName, envFile);
+};
+
+const decryptAndStoreMany = async (envList = []) => {
+  const promises = [];
+  envList.forEach((e) => {
+    promises.push(decryptAndStore(e.ciphertext, e.fileName));
+  });
+  // Wait for promises to resolve
+  return await Promise.all(promises);
+};
+
+const pull = async ({environmentName: envName, all}) => {
   try {
     // Retrieve the encrypted data
     const {data: {environments}} = await graphql.query({
       query: pullEnvironments,
       variables: {
-        name: environmentName,
         projectId: Settings.app.projectId,
       },
     });
 
-    if (environments.length > 1) {
-      console.log('You have to provide a environment name. Available names are:',
-        environments.map(e => e.name).join(' '));
-      return;
+    if (all === true) {
+      return await decryptAndStoreMany(environments.map(e => ({
+        ciphertext: e.data,
+        fileName: '.env.' + e.name,
+      })));
     }
 
-    // Decode the data
-    const {data: envFile} = await decrypt({
-      ciphertext: environments[0].data,
-      privateKey: getPrivateKey(),
-      password: getPgpPassphrase(),
-    });
+    if (envName) {
+      return await decryptAndStoreMany(environments.filter(e => e.name === envName).map(e => ({
+        ciphertext: e.data,
+        fileName: '.env',
+      })));
+    }
 
-    // Store the data to the local file
-    fs.writeFileSync('.env', envFile);
+    if (environments.length === 1) {
+      return await decryptAndStoreMany(environments.map(e => ({
+        ciphertext: e.data,
+        fileName: '.env',
+      })));
+    }
+
+    console.log('You have to provide a environment name. Available names are:',
+      environments.map(e => e.name).join(' '));
 
   } catch (e) {
     console.error(e);

@@ -17,7 +17,7 @@ switch (argv._[0]) {
     break;
 
   case 'pull':
-    pull({environmentName: argv._[1]});
+    pull({environmentName: argv._[1], all: argv.all});
     break;
 
   case 'signup':
