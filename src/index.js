@@ -6,10 +6,17 @@ import signin from './signin';
 import signup from './signup';
 import notImplemented from './not-implemented';
 import init from './init';
+import add from './add';
+
+// console.log(argv);
 
 switch (argv._[0]) {
   case 'init':
     init();
+    break;
+
+  case 'add':
+    add({environmentName: argv._[1]});
     break;
 
   case 'push':
@@ -17,7 +24,7 @@ switch (argv._[0]) {
     break;
 
   case 'pull':
-    pull({environmentName: argv._[1], all: argv.all});
+    pull({environmentName: argv._[1]});
     break;
 
   case 'signup':
