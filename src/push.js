@@ -5,33 +5,37 @@ import {encrypt} from './pgp';
 import {getPublicKey} from './configuration';
 import Settings from './settings';
 
-const pushMutation = gql`
-  mutation pushMutation($environment: String!, $projectId: String!, $name: String!) {
-    push(environment: $environment, projectId: $projectId, name: $name)
+const pushEnvironment = gql`
+  mutation pushEnvironment($data: String!, $projectId: String!, $name: String) {
+    pushEnvironment(data: $data, projectId: $projectId, name: $name) {
+      name
+    }
   }
 `;
 
 const push = async ({environmentName}) => {
-  if (! environmentName) {
-    console.error('Usage: habibi push <environment-name>');
-    return;
-  }
   try {
     const envFile = fs.readFileSync('.env');
     const {data} = await encrypt({data: envFile.toString(), publicKeys: [getPublicKey()]});
 
-    const result = await graphql.mutate({
-      mutation: pushMutation,
+    await graphql.mutate({
+      mutation: pushEnvironment,
       variables: {
         name: environmentName,
         projectId: Settings.app.projectId,
-        environment: data,
+        data: data,
       },
     });
-    console.log(JSON.stringify(result.data, null, 2));
+    console.log('OK');
 
   } catch (e) {
-    console.error(e);
+    if (e.graphQLErrors) {
+      e.graphQLErrors.forEach((ge) => {
+        console.log('ERROR', ge.message);
+      });
+    } else {
+      console.log('ERROR', 'unknown-error');
+    }
   }
 };
 

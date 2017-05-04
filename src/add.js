@@ -7,7 +7,9 @@ import Settings from './settings';
 
 const addEnvironment = gql`
   mutation addEnvironment($data: String!, $projectId: String!, $name: String!) {
-    addEnvironment(data: $data, projectId: $projectId, name: $name)
+    addEnvironment(data: $data, projectId: $projectId, name: $name) {
+      name
+    }
   }
 `;
 

@@ -5,8 +5,8 @@ import {decrypt} from './pgp';
 import {getPrivateKey, getPgpPassphrase} from './configuration';
 import Settings from './settings';
 
-const pullEnvironments = gql`
-  query pullEnvironments($projectId: String!) {
+const environmentsQuery = gql`
+  query environmentsQuery($projectId: String!) {
     environments(projectId: $projectId) {
       name
       data
@@ -38,18 +38,11 @@ const pull = async ({environmentName: envName, all}) => {
   try {
     // Retrieve the encrypted data
     const {data: {environments}} = await graphql.query({
-      query: pullEnvironments,
+      query: environmentsQuery,
       variables: {
         projectId: Settings.app.projectId,
       },
     });
-
-    if (all === true) {
-      return await decryptAndStoreMany(environments.map(e => ({
-        ciphertext: e.data,
-        fileName: '.env.' + e.name,
-      })));
-    }
 
     if (envName) {
       return await decryptAndStoreMany(environments.filter(e => e.name === envName).map(e => ({
@@ -69,7 +62,13 @@ const pull = async ({environmentName: envName, all}) => {
       environments.map(e => e.name).join(' '));
 
   } catch (e) {
-    console.error(e);
+    if (e.graphQLErrors) {
+      e.graphQLErrors.forEach((ge) => {
+        console.log('ERROR', ge.message);
+      });
+    } else {
+      console.log('ERROR', 'unknown-error');
+    }
   }
 };
 
