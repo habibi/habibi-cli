@@ -1,6 +1,6 @@
 import fs from 'fs';
 import gql from 'graphql-tag';
-import graphql from './graphql';
+import graphql from '../modules/graphql';
 
 const createProject = gql`
   mutation createProject {

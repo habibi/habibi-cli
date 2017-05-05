@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
-import graphql from './graphql';
-import RegEx from './regex';
-import {generateSignUpHash} from './crypto';
+import graphql from '../modules/graphql';
+import RegEx from '../modules/regex';
+import {generateSignUpHash} from '../modules/crypto';
 // import {getPgpPassphrase, getApiToken} from './configuration';
-import {storeApiToken, storePgpPassphrase} from './configuration';
-import prompt from './prompt';
+import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
+import prompt from '../modules/prompt';
 
 const schema = {
   properties: {

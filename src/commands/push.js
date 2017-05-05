@@ -1,9 +1,9 @@
 import fs from 'fs';
 import gql from 'graphql-tag';
-import graphql from './graphql';
-import {encrypt} from './pgp';
-import {getPublicKey} from './configuration';
-import Settings from './settings';
+import graphql from '../modules/graphql';
+import {encrypt} from '../modules/pgp';
+import {getPublicKey} from '../modules/configuration';
+import Settings from '../modules/settings';
 
 const pushEnvironment = gql`
   mutation pushEnvironment($data: String!, $projectId: String!, $name: String) {

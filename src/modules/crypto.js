@@ -29,5 +29,4 @@ const generateRandomString = () => {
   return crypto.randomBytes(32).toString('hex');
 };
 
-
 export {generateHash, generateSignUpHash, generatePGPHash, generateRandomString};

@@ -1,9 +1,9 @@
 import fs from 'fs';
 import gql from 'graphql-tag';
-import graphql from './graphql';
-import {decrypt} from './pgp';
-import {getPrivateKey, getPgpPassphrase} from './configuration';
-import Settings from './settings';
+import graphql from '../modules/graphql';
+import {decrypt} from '../modules/pgp';
+import {getPrivateKey, getPgpPassphrase} from '../modules/configuration';
+import Settings from '../modules/settings';
 
 const environmentsQuery = gql`
   query environmentsQuery($projectId: String!) {

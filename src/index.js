@@ -1,12 +1,12 @@
 import 'isomorphic-fetch';
 import {argv} from 'yargs';
-import push from './push';
-import pull from './pull';
-import signin from './signin';
-import signup from './signup';
-import notImplemented from './not-implemented';
-import init from './init';
-import add from './add';
+import push from './commands/push';
+import pull from './commands/pull';
+import signin from './commands/signin';
+import signup from './commands/signup';
+import notImplemented from './commands/not-implemented';
+import init from './commands/init';
+import add from './commands/add';
 
 // console.log(argv);
 
