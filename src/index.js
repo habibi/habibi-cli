@@ -7,6 +7,7 @@ import signup from './commands/signup';
 import notImplemented from './commands/not-implemented';
 import init from './commands/init';
 import add from './commands/add';
+import share from './commands/share';
 
 // console.log(argv);
 
@@ -16,15 +17,15 @@ switch (argv._[0]) {
     break;
 
   case 'add':
-    add({environmentName: argv._[1]});
+    add({envName: argv._[1]});
     break;
 
   case 'push':
-    push({environmentName: argv._[1]});
+    push({envName: argv._[1]});
     break;
 
   case 'pull':
-    pull({environmentName: argv._[1]});
+    pull({envName: argv._[1]});
     break;
 
   case 'signup':
@@ -37,6 +38,10 @@ switch (argv._[0]) {
 
   case 'signout':
     notImplemented();
+    break;
+
+  case 'share':
+    share({envName: argv._[1], email: argv._[2]});
     break;
 
   default:

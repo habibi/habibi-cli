@@ -13,7 +13,7 @@ const pushEnvironment = gql`
   }
 `;
 
-const push = async ({environmentName}) => {
+const push = async ({envName}) => {
   try {
     const envFile = fs.readFileSync('.env');
     const {data} = await encrypt({data: envFile.toString(), publicKeys: [getPublicKey()]});
@@ -21,7 +21,7 @@ const push = async ({environmentName}) => {
     await graphql.mutate({
       mutation: pushEnvironment,
       variables: {
-        name: environmentName,
+        name: envName,
         projectId: Settings.app.projectId,
         data: data,
       },

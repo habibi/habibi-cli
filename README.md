@@ -10,28 +10,30 @@ Habibi CLI is a command line tool which is used to connect to Habibi and manage 
 # Account management
 habibi signup
 habibi signin
+# habibi signout
 
 # Create a new project and adds the current user as project admin.
 habibi init
 
 # Create a new environment in the current project and add the local .env file to it. Requires project admin privileges.
-habibi add <env-name>
+habibi add <environment-name>
 
-# Retrieve an environment and store it in the local .env file. For users with only one environment in the current project it's optional to provide this command with an env-name.
-habibi pull [<env-name>]
+# Retrieve an environment and store it in the local .env file. For users with only one environment in the current project it's optional to provide this command with an environment-name.
+habibi pull [<environment-name>]
 
-# Update an environment based on the contents of the local .env file. For users with only one environment in the current project it's optional to provide this command with an env-name. Requires write access to the environment.
-habibi push [<env-name>]
+# Update an environment based on the contents of the local .env file. For users with only one environment in the current project it's optional to provide this command with an environment-name. Requires write access to the environment.
+habibi push [<environment-name>]
 
 # Share an environment with another user. Requires project admin privileges.
-habibi share <env-name> <email>
+habibi share <environment-name> <email>
 
 # Remove access for another user. Requires project admin privileges.
-habibi unshare <env-name> <email>
+# habibi unshare <environment-name> <email>
 
 # List all users and environments in the current project. Requires project admin privileges.
-habibi info
+# habibi list users
+# habibi list [--all-projects]
 
 # Dump all environments in the current project to files. Requires read access to the environments.
-habibi dump [--out-dir <directory-name>]
+# habibi dump [--out-dir <directory-name>]
 ```

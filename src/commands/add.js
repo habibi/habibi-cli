@@ -13,8 +13,8 @@ const addEnvironment = gql`
   }
 `;
 
-const push = async ({environmentName}) => {
-  if (! environmentName) {
+const push = async ({envName}) => {
+  if (! envName) {
     console.error('Usage: habibi add <environment-name>');
     return;
   }
@@ -25,7 +25,7 @@ const push = async ({environmentName}) => {
     await graphql.mutate({
       mutation: addEnvironment,
       variables: {
-        name: environmentName,
+        name: envName,
         projectId: Settings.app.projectId,
         data: data,
       },

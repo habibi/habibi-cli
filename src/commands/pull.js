@@ -34,7 +34,7 @@ const decryptAndStoreMany = async (envList = []) => {
   return await Promise.all(promises);
 };
 
-const pull = async ({environmentName: envName, all}) => {
+const pull = async ({envName}) => {
   try {
     // Retrieve the encrypted data
     const {data: {environments}} = await graphql.query({
