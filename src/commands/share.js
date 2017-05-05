@@ -19,7 +19,7 @@ const share = async ({envName, email}) => {
     mutation: shareEnvironment,
     variables: {
       name: envName,
-      projectId: Settings.app.projectId,
+      projectId: Settings.projectId,
       email: email,
     },
   });

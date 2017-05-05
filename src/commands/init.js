@@ -1,6 +1,8 @@
 import fs from 'fs';
+import path from 'path';
 import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
+import {projectDir} from '../modules/filesystem';
 
 const createProject = gql`
   mutation createProject {
@@ -9,7 +11,7 @@ const createProject = gql`
 `;
 
 const init = async () => {
-  if (fs.existsSync('.habibi.json')) {
+  if (fs.existsSync(path.resolve(projectDir, '.habibi.json'))) {
     console.error('This project already have an .habibi.json file, will do nothing.');
     return;
   }

@@ -1,16 +1,15 @@
 import fs from 'fs';
+import path from 'path';
+import findParentDir from 'find-parent-dir';
 
-export default {
-  app: (() => {
-    if (fs.existsSync('.habibi.json')) {
-      return JSON.parse(fs.readFileSync('.habibi.json').toString());
-    }
+export default (() => {
+  const dir = findParentDir.sync(process.cwd(), '.habibi.json');
+  if (! dir) {
     return {};
-  })(),
-  env: (() => {
-    if (fs.existsSync('.habibi.env.json')) {
-      return JSON.parse(fs.readFileSync('.habibi.env.json').toString());
-    }
-    return {};
-  })(),
-};
+  }
+  const filePath = path.resolve(dir, '.habibi.json');
+  if (fs.existsSync(filePath)) {
+    return JSON.parse(fs.readFileSync(filePath).toString());
+  }
+  return {};
+})();

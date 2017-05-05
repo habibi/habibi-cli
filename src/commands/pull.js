@@ -1,9 +1,11 @@
 import fs from 'fs';
+import path from 'path';
 import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import {decrypt} from '../modules/pgp';
 import {getPrivateKey, getPgpPassphrase} from '../modules/configuration';
 import Settings from '../modules/settings';
+import {projectDir} from '../modules/filesystem';
 
 const environmentsQuery = gql`
   query environmentsQuery($projectId: String!) {
@@ -22,7 +24,7 @@ const decryptAndStore = async (ciphertext, fileName) => {
   });
 
   // Store the data to the local file
-  fs.writeFileSync(fileName, envFile);
+  fs.writeFileSync(path.resolve(projectDir, fileName), envFile);
 };
 
 const decryptAndStoreMany = async (envList = []) => {
@@ -36,11 +38,15 @@ const decryptAndStoreMany = async (envList = []) => {
 
 const pull = async ({envName}) => {
   try {
+    if (! Settings.projectId) {
+      throw new Error('no-settings-found');
+    }
+
     // Retrieve the encrypted data
     const {data: {environments}} = await graphql.query({
       query: environmentsQuery,
       variables: {
-        projectId: Settings.app.projectId,
+        projectId: Settings.projectId,
       },
     });
 
@@ -66,6 +72,9 @@ const pull = async ({envName}) => {
       e.graphQLErrors.forEach((ge) => {
         console.log('ERROR', ge.message);
       });
+    } else if (e.message === 'no-settings-found') {
+      console.log('ERROR', 'The .habibi.json file could not be found. Are you outside of your ' +
+        'project directory perhaps?');
     } else {
       console.log('ERROR', 'unknown-error');
     }

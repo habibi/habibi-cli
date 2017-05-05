@@ -1,9 +1,11 @@
 import fs from 'fs';
+import path from 'path';
 import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import {encrypt} from '../modules/pgp';
 import {getPublicKey} from '../modules/configuration';
 import Settings from '../modules/settings';
+import {projectDir} from '../modules/filesystem';
 
 const addEnvironment = gql`
   mutation addEnvironment($data: String!, $projectId: String!, $name: String!) {
@@ -19,14 +21,14 @@ const push = async ({envName}) => {
     return;
   }
   try {
-    const envFile = fs.readFileSync('.env');
+    const envFile = fs.readFileSync(path.resolve(projectDir, '.env'));
     const {data} = await encrypt({data: envFile.toString(), publicKeys: [getPublicKey()]});
 
     await graphql.mutate({
       mutation: addEnvironment,
       variables: {
         name: envName,
-        projectId: Settings.app.projectId,
+        projectId: Settings.projectId,
         data: data,
       },
     });
