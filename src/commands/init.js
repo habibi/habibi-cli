@@ -11,7 +11,7 @@ const createProject = gql`
 `;
 
 const init = async () => {
-  if (fs.existsSync(path.resolve(projectDir, '.habibi.json'))) {
+  if (projectDir && fs.existsSync(path.resolve(projectDir, '.habibi.json'))) {
     console.error('This project already have an .habibi.json file, will do nothing.');
     return;
   }
