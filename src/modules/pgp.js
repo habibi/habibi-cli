@@ -22,7 +22,6 @@ const generateKeys = (email, password) => {
 // Returns a promise
 const encrypt = ({data, publicKeys}) => {
   assert(typeof data === 'string');
-  assert(publicKeys.length > 0);
   assert(Array.isArray(publicKeys));
   assert(publicKeys.length > 0);
   assert(publicKeys.every(e => typeof e === 'string'));

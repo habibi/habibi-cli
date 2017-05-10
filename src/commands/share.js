@@ -1,23 +1,37 @@
 import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import Settings from '../modules/settings';
+import {decrypt, encrypt} from '../modules/pgp';
+import {getPrivateKey, getPgpPassphrase} from '../modules/configuration';
 
-const shareEnvironment = gql`
-  mutation shareEnvironment($projectId: String!, $name: String!, $email: String!) {
-    shareEnvironment(projectId: $projectId, name: $name, email: $email) {
+const environmentsQuery = gql`
+  query environmentsQuery($projectId: String!, $emails: [String!]!) {
+    environments(projectId: $projectId) {
       name
-      readAccess
+      data
+      readAccess {
+        emails
+        publicKey
+      }
+    }
+    users(emails: $emails) {
+      emails
+      publicKey
     }
   }
 `;
 
-const publicKeysQuery = gql`
-query publicKeysQuery($emails: [String!]!) {
-  users(emails: $emails) {
-    emails
-    publicKey
+const shareEnvironment = gql`
+  mutation shareEnvironment(
+    $data: String!,
+    $projectId: String!,
+    $name: String!,
+    $emails: [String!]!
+  ) {
+    shareEnvironment(data: $data, projectId: $projectId, name: $name, emails: $emails) {
+      name
+    }
   }
-}
 `;
 
 const share = async ({envName, email}) => {
@@ -27,27 +41,58 @@ const share = async ({envName, email}) => {
   }
 
   try {
-    const result = await graphql.mutate({
+    const {data: remoteData} = await graphql.query({
+      query: environmentsQuery,
+      variables: {
+        projectId: Settings.projectId,
+        emails: [email],
+      },
+    });
+
+    const environment = remoteData.environments.find(e => e.name === envName);
+
+    if (! environment) {
+      throw new Error('environment-not-found');
+    }
+
+    if (! remoteData.users || ! remoteData.users.length) {
+      throw new Error('user-not-found');
+    }
+
+    // Using Set to omit any duplicate keys
+    const publicKeys = new Set(environment.readAccess.map(e => e.publicKey));
+    remoteData.users.forEach((e) => {
+      publicKeys.add(e.publicKey);
+    });
+
+    const {data: plaintext} = await decrypt({
+      ciphertext: environment.data,
+      privateKey: getPrivateKey(),
+      password: getPgpPassphrase(),
+    });
+
+    const {data: newCiphertext} = await encrypt({
+      data: plaintext.toString(),
+      publicKeys: Array.from(publicKeys),
+    });
+
+    const emails = new Set(environment.readAccess.map(user => user.emails[0]));
+    emails.add(email);
+
+    await graphql.mutate({
       mutation: shareEnvironment,
       variables: {
-        name: envName,
+        name: environment.name,
         projectId: Settings.projectId,
-        email: email,
+        data: newCiphertext,
+        emails: Array.from(emails),
       },
     });
-    const emails = result.data.shareEnvironment.readAccess;
+    console.log('OK');
 
-    const resultz = await graphql.query({
-      query: publicKeysQuery,
-      variables: {
-        emails,
-      },
-    });
-    console.log('OK2', resultz.data.users);
   } catch (e) {
-    console.log('x', e);
+    console.log(e);
   }
-
 };
 
 export default share;
