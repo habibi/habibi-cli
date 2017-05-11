@@ -38,7 +38,7 @@ habibi share <environment-name> <email>
 # habibi dump [--out-dir <directory-name>]
 ```
 
-## Contribute
+## Contributing
 
 ### Set up Habibi CLI for development
 
