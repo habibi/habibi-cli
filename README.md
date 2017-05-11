@@ -50,7 +50,7 @@ habibi share <environment-name> <email>
 git clone https://github.com/habibi/habibi.git
 cd habibi
 npm link
-npm watch
+npm run watch
 ```
 
 Open a new terminal and run Habibi CLI by typing `habibi` + *enter*.
