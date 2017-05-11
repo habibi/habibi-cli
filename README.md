@@ -37,3 +37,20 @@ habibi share <environment-name> <email>
 # Dump all environments in the current project to files. Requires read access to the environments.
 # habibi dump [--out-dir <directory-name>]
 ```
+
+## Contribute
+
+### Set up Habibi CLI for development
+
+1. Install the latest [Node.js](https://nodejs.org/)
+2. Install [Git](https://git-scm.com/downloads) or [GitHub Desktop](https://desktop.github.com/) (which includes Git)
+3. Run the following commands:
+
+```sh
+git clone https://github.com/habibi/habibi.git
+cd habibi
+npm link
+npm watch
+```
+
+Open a new terminal and run Habibi CLI by typing `habibi` + *enter*.
