@@ -3,12 +3,15 @@ import path from 'path';
 import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import {decrypt} from '../modules/pgp';
-import {getPrivateKey, getPgpPassphrase} from '../modules/configuration';
+import {getPgpPassphrase} from '../modules/configuration';
 import Settings from '../modules/settings';
 import {projectDir} from '../modules/filesystem';
 
 const environmentsQuery = gql`
   query environmentsQuery($projectId: String!) {
+    currentUser: currentUser {
+      privateKey
+    }
     environments(projectId: $projectId) {
       name
       data
@@ -16,10 +19,10 @@ const environmentsQuery = gql`
   }
 `;
 
-const decryptAndStore = async (ciphertext, fileName) => {
+const decryptAndStore = async (ciphertext, fileName, privateKey) => {
   const {data: envFile} = await decrypt({
     ciphertext: ciphertext,
-    privateKey: getPrivateKey(),
+    privateKey: privateKey,
     password: getPgpPassphrase(),
   });
 
@@ -27,10 +30,10 @@ const decryptAndStore = async (ciphertext, fileName) => {
   fs.writeFileSync(path.resolve(projectDir, fileName), envFile);
 };
 
-const decryptAndStoreMany = async (envList = []) => {
+const decryptAndStoreMany = async (envList = [], privateKey) => {
   const promises = [];
   envList.forEach((e) => {
-    promises.push(decryptAndStore(e.ciphertext, e.fileName));
+    promises.push(decryptAndStore(e.ciphertext, e.fileName, privateKey));
   });
   // Wait for promises to resolve
   return await Promise.all(promises);
@@ -43,7 +46,7 @@ const pull = async ({envName}) => {
     }
 
     // Retrieve the encrypted data
-    const {data: {environments}} = await graphql.query({
+    const {data: {environments, currentUser}} = await graphql.query({
       query: environmentsQuery,
       variables: {
         projectId: Settings.projectId,
@@ -54,14 +57,14 @@ const pull = async ({envName}) => {
       return await decryptAndStoreMany(environments.filter(e => e.name === envName).map(e => ({
         ciphertext: e.data,
         fileName: '.env',
-      })));
+      })), currentUser.privateKey);
     }
 
     if (environments.length === 1) {
       return await decryptAndStoreMany(environments.map(e => ({
         ciphertext: e.data,
         fileName: '.env',
-      })));
+      })), currentUser.privateKey);
     }
 
     console.log('You have to provide a environment name. Available names are:',

@@ -13,11 +13,6 @@ const ensureHabibiConfigurationDirectory = () => {
   }
 };
 
-// Returns a string
-const getPrivateKey = () => {
-  return fs.readFileSync(path.join(habibiDir, 'private-key')).toString();
-};
-
 const getPublicKey = () => {
   return fs.readFileSync(path.join(habibiDir, 'public-key')).toString();
 };
@@ -65,7 +60,6 @@ const storeApiToken = (password) => {
 };
 
 export {
-  getPrivateKey,
   getPublicKey,
   storePrivateKey,
   storePublicKey,

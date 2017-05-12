@@ -3,12 +3,7 @@ import graphql from '../modules/graphql';
 import RegEx from '../modules/regex';
 import {generateKeys} from '../modules/pgp';
 import {generateSignUpHash} from '../modules/crypto';
-import {
-  storePrivateKey,
-  storePublicKey,
-  storeApiToken,
-  storePgpPassphrase,
-} from '../modules/configuration';
+import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
 import prompt from '../modules/prompt';
 
 const promptSchema = {
@@ -49,10 +44,6 @@ const signup = async () => {
       privateKeyArmored,
       publicKeyArmored,
     } = await generateKeys(input.email, input.password);
-
-    // Store PGP keys locally
-    storePrivateKey(privateKeyArmored);
-    storePublicKey(publicKeyArmored);
 
     // Store PGP keys remotely
     const {data} = await graphql.mutate({

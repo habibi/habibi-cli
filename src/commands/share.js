@@ -2,10 +2,13 @@ import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import Settings from '../modules/settings';
 import {decrypt, encrypt} from '../modules/pgp';
-import {getPrivateKey, getPgpPassphrase} from '../modules/configuration';
+import {getPgpPassphrase} from '../modules/configuration';
 
 const environmentsQuery = gql`
   query environmentsQuery($projectId: String!, $emails: [String!]!) {
+    currentUser: currentUser {
+      privateKey
+    }
     environments(projectId: $projectId) {
       name
       data
@@ -41,7 +44,7 @@ const share = async ({envName, email}) => {
   }
 
   try {
-    const {data: remoteData} = await graphql.query({
+    const {data: {environments, users, currentUser}} = await graphql.query({
       query: environmentsQuery,
       variables: {
         projectId: Settings.projectId,
@@ -49,25 +52,23 @@ const share = async ({envName, email}) => {
       },
     });
 
-    const environment = remoteData.environments.find(e => e.name === envName);
+    const environment = environments.find(e => e.name === envName);
 
     if (! environment) {
       throw new Error('environment-not-found');
     }
 
-    if (! remoteData.users || ! remoteData.users.length) {
+    if (! users || ! users.length) {
       throw new Error('user-not-found');
     }
 
     // Using Set to omit any duplicate keys
     const publicKeys = new Set(environment.readAccess.map(e => e.publicKey));
-    remoteData.users.forEach((e) => {
-      publicKeys.add(e.publicKey);
-    });
+    users.forEach(e => publicKeys.add(e.publicKey));
 
     const {data: plaintext} = await decrypt({
       ciphertext: environment.data,
-      privateKey: getPrivateKey(),
+      privateKey: currentUser.privateKey,
       password: getPgpPassphrase(),
     });
 
