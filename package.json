@@ -7,8 +7,8 @@
     "habibi": "bin/habibi.js"
   },
   "scripts": {
-    "watch": "babel src -d dist --watch",
-    "build": "babel src -d dist",
+    "watch": "babel src -d dist --source-maps inline --watch",
+    "build": "babel src -d dist --source-maps inline",
     "lint": "eslint . || true",
     "postinstall": "npm run build"
   },
@@ -30,6 +30,7 @@
     "netrc": "0.1.4",
     "openpgp": "2.5.4",
     "prompt": "1.0.0",
+    "source-map-support": "0.4.15",
     "yargs": "8.0.1"
   },
   "devDependencies": {

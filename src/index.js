@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import 'isomorphic-fetch';
 import {argv} from 'yargs';
 import push from './commands/push';
