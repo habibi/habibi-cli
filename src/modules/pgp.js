@@ -1,8 +1,8 @@
 import assert from 'assert';
 import {generatePGPHash} from './crypto';
 import RegEx from './regex';
-
-// Note, ES6 import does not work with openpgp.key.readArmored() for some reason.
+// Note, ES6 import does not work with openpgp.key.readArmored() for some reason, so using require
+// instead.
 // import openpgp from 'openpgp';
 const openpgp = require('openpgp');
 
