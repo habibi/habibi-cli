@@ -6,6 +6,7 @@ import {decrypt} from '../modules/pgp';
 import {getPgpPassphrase} from '../modules/configuration';
 import Settings from '../modules/settings';
 import {projectDir} from '../modules/filesystem';
+import UserError from '../modules/UserError';
 
 const environmentsQuery = gql`
   query environmentsQuery($projectId: String!) {
@@ -40,11 +41,11 @@ const decryptAndStoreMany = async (envList = [], privateKey) => {
 };
 
 const pull = async ({envName}) => {
-  try {
-    if (! Settings.projectId) {
-      throw new Error('no-settings-found');
-    }
+  if (! Settings.projectId) {
+    throw new UserError('no-settings-found');
+  }
 
+  try {
     // Retrieve the encrypted data
     const {data: {environments, currentUser}} = await graphql.query({
       query: environmentsQuery,
@@ -72,15 +73,9 @@ const pull = async ({envName}) => {
 
   } catch (e) {
     if (e.graphQLErrors) {
-      e.graphQLErrors.forEach((ge) => {
-        console.log('ERROR', ge.message);
-      });
-    } else if (e.message === 'no-settings-found') {
-      console.log('ERROR', 'The .habibi.json file could not be found. Are you outside of your ' +
-        'project directory perhaps?');
-    } else {
-      console.log('ERROR', 'unknown-error');
+      throw new UserError(e.graphQLErrors[0].message);
     }
+    throw e;
   }
 };
 

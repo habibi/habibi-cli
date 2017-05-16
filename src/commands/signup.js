@@ -5,6 +5,7 @@ import {generateKeys} from '../modules/pgp';
 import {generateSignUpHash} from '../modules/crypto';
 import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
 import prompt from '../modules/prompt';
+import UserError from '../modules/UserError';
 
 const promptSchema = {
   properties: {
@@ -62,11 +63,9 @@ const signup = async () => {
 
   } catch (e) {
     if (e.graphQLErrors && e.graphQLErrors[0].message === 'duplicate-email') {
-      console.error('There is already a user with the email you provided, ' +
-        'try signing in instead');
-    } else {
-      console.error(e);
+      throw new UserError('duplicate-email');
     }
+    throw e;
   }
 };
 

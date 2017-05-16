@@ -5,6 +5,7 @@ import graphql from '../modules/graphql';
 import {encrypt} from '../modules/pgp';
 import Settings from '../modules/settings';
 import {projectDir} from '../modules/filesystem';
+import UserError from '../modules/UserError';
 
 const currentUserQuery = gql`
   query currentUser {
@@ -24,11 +25,10 @@ const addEnvironment = gql`
 
 const push = async ({envName}) => {
   if (! envName) {
-    console.error('Usage: habibi add <environment-name>');
-    return;
+    throw new UserError('explain-usage-add');
   }
-  try {
 
+  try {
     const {data: {currentUser}} = await graphql.query({
       query: currentUserQuery,
     });
@@ -44,16 +44,12 @@ const push = async ({envName}) => {
         data: data,
       },
     });
-    console.log('OK');
 
   } catch (e) {
     if (e.graphQLErrors) {
-      e.graphQLErrors.forEach((ge) => {
-        console.log('ERROR', ge.message);
-      });
-    } else {
-      console.log('ERROR', 'unknown-error');
+      throw new UserError(e.graphQLErrors[0].message);
     }
+    throw e;
   }
 };
 

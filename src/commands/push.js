@@ -5,6 +5,7 @@ import graphql from '../modules/graphql';
 import {encrypt} from '../modules/pgp';
 import Settings from '../modules/settings';
 import {projectDir} from '../modules/filesystem';
+import UserError from '../modules/UserError';
 
 const currentUserQuery = gql`
   query currentUser {
@@ -44,12 +45,9 @@ const push = async ({envName}) => {
 
   } catch (e) {
     if (e.graphQLErrors) {
-      e.graphQLErrors.forEach((ge) => {
-        console.log('ERROR', ge.message);
-      });
-    } else {
-      console.log('ERROR', 'unknown-error');
+      throw new UserError(e.graphQLErrors[0].message);
     }
+    throw e;
   }
 };
 

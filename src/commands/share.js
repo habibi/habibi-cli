@@ -3,6 +3,7 @@ import graphql from '../modules/graphql';
 import Settings from '../modules/settings';
 import {decrypt, encrypt} from '../modules/pgp';
 import {getPgpPassphrase} from '../modules/configuration';
+import UserError from '../modules/UserError';
 
 const environmentsQuery = gql`
   query environmentsQuery($projectId: String!, $emails: [String!]!) {
@@ -39,8 +40,7 @@ const shareEnvironment = gql`
 
 const share = async ({envName, email}) => {
   if (! envName || ! email) {
-    console.error('Usage: habibi share <environment-name> <email>');
-    return;
+    throw new UserError('explain-usage-share');
   }
 
   try {
@@ -92,7 +92,7 @@ const share = async ({envName, email}) => {
     console.log('OK');
 
   } catch (e) {
-    console.log(e);
+    throw e;
   }
 };
 

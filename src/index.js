@@ -1,6 +1,7 @@
 import 'source-map-support/register';
 import 'isomorphic-fetch';
 import {argv} from 'yargs';
+import UserError from './modules/UserError';
 import push from './commands/push';
 import pull from './commands/pull';
 import signin from './commands/signin';
@@ -10,42 +11,49 @@ import init from './commands/init';
 import add from './commands/add';
 import share from './commands/share';
 
-// console.log(argv);
+(async () => {
+  try {
+    switch (argv._[0]) {
+      case 'init':
+        await init();
+        break;
 
-switch (argv._[0]) {
-  case 'init':
-    init();
-    break;
+      case 'add':
+        await add({envName: argv._[1]});
+        break;
 
-  case 'add':
-    add({envName: argv._[1]});
-    break;
+      case 'push':
+        await push({envName: argv._[1]});
+        break;
 
-  case 'push':
-    push({envName: argv._[1]});
-    break;
+      case 'pull':
+        await pull({envName: argv._[1]});
+        break;
 
-  case 'pull':
-    pull({envName: argv._[1]});
-    break;
+      case 'signup':
+        await signup();
+        break;
 
-  case 'signup':
-    signup();
-    break;
+      case 'signin':
+        await signin();
+        break;
 
-  case 'signin':
-    signin();
-    break;
+      case 'signout':
+        await notImplemented();
+        break;
 
-  case 'signout':
-    notImplemented();
-    break;
+      case 'share':
+        await share({envName: argv._[1], email: argv._[2]});
+        break;
 
-  case 'share':
-    share({envName: argv._[1], email: argv._[2]});
-    break;
-
-  default:
-    // eslint-disable-next-line no-console
-    console.error('Usage: habibi push|pull|signin');
-}
+      default:
+        throw new UserError('explain-usage');
+    }
+  } catch (e) {
+    if (e instanceof UserError) {
+      console.error(e.description);
+    } else {
+      console.error('UNKNOWN ERROR', e);
+    }
+  }
+})();
