@@ -10,6 +10,7 @@ import notImplemented from './commands/not-implemented';
 import init from './commands/init';
 import add from './commands/add';
 import share from './commands/share';
+import unshare from './commands/unshare';
 
 (async () => {
   try {
@@ -44,6 +45,10 @@ import share from './commands/share';
 
       case 'share':
         await share({envName: argv._[1], email: argv._[2]});
+        break;
+
+      case 'unshare':
+        await unshare({envName: argv._[1], email: argv._[2]});
         break;
 
       default:

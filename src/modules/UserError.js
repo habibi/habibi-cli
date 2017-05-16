@@ -11,13 +11,16 @@ export default class UserError extends Error {
 
   static messages = {
     'explain-usage':
-      'Usage: habibi init|add|push|pull|share|signup|signin|signout',
+      'Usage: habibi init|add|push|pull|share|unshare|signup|signin|signout',
 
     'explain-usage-add':
       'Usage: habibi add <environment-name>',
 
     'explain-usage-share':
       'Usage: habibi share <environment-name> <email>',
+
+    'explain-usage-unshare':
+      'Usage: habibi unshare <environment-name> <email>',
 
     'no-settings-found':
       'The .habibi.json file could not be found. Are you outside of your project directory ' +

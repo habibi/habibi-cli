@@ -51,4 +51,28 @@ const decrypt = ({ciphertext, privateKey, password}) => {
   });
 };
 
-export {generateKeys, encrypt, decrypt};
+// Replaces the public keys on an encrypted message and return the new encrypted message. Returns a
+// promise.
+const recrypt = async ({ciphertext, privateKey, password, publicKeys}) => {
+  assert(typeof ciphertext === 'string');
+  assert(typeof privateKey === 'string');
+  assert(typeof password === 'string');
+  assert(Array.isArray(publicKeys));
+  assert(publicKeys.length > 0);
+  assert(publicKeys.every(e => typeof e === 'string'));
+
+  // Decrypt the data
+  const {data: plaintext} = await decrypt({ciphertext, privateKey, password});
+
+  assert(typeof plaintext === 'string', 'decrypt-failed');
+
+  // Encrypt the data with the new list of public keys
+  const {data: newCiphertext} = await encrypt({
+    data: plaintext,
+    publicKeys: publicKeys,
+  });
+
+  return newCiphertext;
+};
+
+export {generateKeys, encrypt, decrypt, recrypt};
