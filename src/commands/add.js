@@ -8,7 +8,7 @@ import {projectDir} from '../modules/filesystem';
 
 const currentUserQuery = gql`
   query currentUser {
-    currentUser: currentUser {
+    currentUser {
       publicKey
     }
   }

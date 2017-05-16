@@ -3,9 +3,16 @@ import path from 'path';
 import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import {encrypt} from '../modules/pgp';
-import {getPublicKey} from '../modules/configuration';
 import Settings from '../modules/settings';
 import {projectDir} from '../modules/filesystem';
+
+const currentUserQuery = gql`
+  query currentUser {
+    currentUser {
+      publicKey
+    }
+  }
+`;
 
 const pushEnvironment = gql`
   mutation pushEnvironment($data: String!, $projectId: String!, $name: String) {
@@ -17,8 +24,13 @@ const pushEnvironment = gql`
 
 const push = async ({envName}) => {
   try {
+
+    const {data: {currentUser}} = await graphql.query({
+      query: currentUserQuery,
+    });
+
     const envFile = fs.readFileSync(path.resolve(projectDir, '.env'));
-    const {data} = await encrypt({data: envFile.toString(), publicKeys: [getPublicKey()]});
+    const {data} = await encrypt({data: envFile.toString(), publicKeys: [currentUser.publicKey]});
 
     await graphql.mutate({
       mutation: pushEnvironment,

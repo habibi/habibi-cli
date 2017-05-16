@@ -6,7 +6,7 @@ import {getPgpPassphrase} from '../modules/configuration';
 
 const environmentsQuery = gql`
   query environmentsQuery($projectId: String!, $emails: [String!]!) {
-    currentUser: currentUser {
+    currentUser {
       privateKey
     }
     environments(projectId: $projectId) {

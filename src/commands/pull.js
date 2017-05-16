@@ -9,7 +9,7 @@ import {projectDir} from '../modules/filesystem';
 
 const environmentsQuery = gql`
   query environmentsQuery($projectId: String!) {
-    currentUser: currentUser {
+    currentUser {
       privateKey
     }
     environments(projectId: $projectId) {
