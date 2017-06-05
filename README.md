@@ -8,7 +8,7 @@ Habibi CLI is a command line tool which is used to connect to Habibi and manage 
 ## Commands
 ```sh
 # Account management
-habibi signup
+habibi signup <email>
 habibi signin
 # habibi signout
 
@@ -28,7 +28,7 @@ habibi push [<environment-name>]
 habibi share <environment-name> <email>
 
 # Remove access for another user. Requires project admin privileges.
-# habibi unshare <environment-name> <email>
+habibi unshare <environment-name> <email>
 
 # List all users and environments in the current project. Requires project admin privileges.
 # habibi list users

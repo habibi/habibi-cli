@@ -9,11 +9,11 @@ import UserError from '../modules/UserError';
 
 const promptSchema = {
   properties: {
-    email: {
-      pattern: RegEx.email,
-      message: 'Email must be valid and only lower case letters are allowed',
-      required: true,
-    },
+    // email: {
+    //   pattern: RegEx.email,
+    //   message: 'Email must be valid and only lower case letters are allowed',
+    //   required: true,
+    // },
     password: {
       hidden: true,
       required: true,
@@ -37,19 +37,27 @@ const signUpMutation = gql`
   }
 `;
 
-const signup = async () => {
+const signup = async ({email}) => {
+  if (typeof email !== 'string') {
+    throw new UserError('explain-usage-signup');
+  }
+
+  if (! RegEx.email.test(email)) {
+    throw new UserError('invalid-email');
+  }
+
   try {
     const input = await prompt(promptSchema);
 
     const {
       privateKeyArmored,
       publicKeyArmored,
-    } = await generateKeys(input.email, input.password);
+    } = await generateKeys(email, input.password);
 
     // Store PGP keys remotely
     const {data} = await graphql.mutate({
       variables: {
-        email: input.email,
+        email: email,
         password: generateSignUpHash(input.password),
         privateKey: privateKeyArmored,
         publicKey: publicKeyArmored,

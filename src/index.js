@@ -32,7 +32,7 @@ import unshare from './commands/unshare';
         break;
 
       case 'signup':
-        await signup();
+        await signup({email: argv._[1]});
         break;
 
       case 'signin':

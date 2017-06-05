@@ -22,6 +22,9 @@ export default class UserError extends Error {
     'explain-usage-unshare':
       'Usage: habibi unshare <environment-name> <email>',
 
+    'explain-usage-signup':
+      'Usage: habibi signup <email>',
+
     'no-settings-found':
       'The .habibi.json file could not be found. Are you outside of your project directory ' +
       'perhaps?',
@@ -34,5 +37,8 @@ export default class UserError extends Error {
 
     'duplicate-email':
       'There is already a user with the email you provided, try signing in instead.',
+
+    'invalid-email':
+      'Email must be valid and only lower case letters are allowed.',
   }
 }
