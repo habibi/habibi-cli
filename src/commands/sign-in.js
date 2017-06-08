@@ -4,15 +4,16 @@ import {generateSignUpHash} from '../modules/crypto';
 // import {getPgpPassphrase, getApiToken} from './configuration';
 import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
 import prompt from '../modules/prompt';
+import UserError from '../modules/UserError';
 import SIGN_IN_USER_MUTATION from '../graphql/SignInUser';
 
 const schema = {
   properties: {
-    email: {
-      pattern: RegEx.email,
-      message: 'Email must be valid and only lower case letters are allowed',
-      required: true,
-    },
+    // email: {
+    //   pattern: RegEx.email,
+    //   message: 'Email must be valid and only lower case letters are allowed',
+    //   required: true,
+    // },
     password: {
       hidden: true,
       required: true,
@@ -20,13 +21,21 @@ const schema = {
   },
 };
 
-const signin = async () => {
+const signin = async ({email}) => {
+  if (typeof email !== 'string') {
+    throw new UserError('explain-usage-signin');
+  }
+
+  if (! RegEx.email.test(email)) {
+    throw new UserError('invalid-email');
+  }
+
   try {
     const input  = await prompt(schema);
 
     const {data} = await graphql.mutate({
       variables: {
-        email: input.email,
+        email: email,
         password: generateSignUpHash(input.password),
       },
       mutation: SIGN_IN_USER_MUTATION,

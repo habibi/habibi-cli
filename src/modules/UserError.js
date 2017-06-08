@@ -25,6 +25,9 @@ export default class UserError extends Error {
     'explain-usage-signup':
       'Usage: habibi signup <email>',
 
+    'explain-usage-signin':
+      'Usage: habibi signin <email>',
+
     'no-settings-found':
       'The .habibi.json file could not be found. Are you outside of your project directory ' +
       'perhaps?',

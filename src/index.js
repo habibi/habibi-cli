@@ -36,7 +36,7 @@ import unshare from './commands/unshare';
         break;
 
       case 'signin':
-        await signIn();
+        await signIn({email: argv._[1]});
         break;
 
       case 'signout':

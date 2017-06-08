@@ -9,8 +9,8 @@ Habibi CLI is a command line tool which is used to connect to Habibi and manage 
 ```sh
 # Account management
 habibi signup <email>
-habibi signin
-# habibi signout
+habibi signin <email>
+habibi signout
 
 # Create a new project and adds the current user as project admin.
 habibi init
