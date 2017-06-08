@@ -1,42 +1,10 @@
-import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import Settings from '../modules/settings';
 import {decrypt, encrypt} from '../modules/pgp';
 import {getPgpPassphrase} from '../modules/configuration';
 import UserError from '../modules/UserError';
-
-const environmentsQuery = gql`
-  query environmentsQuery($projectId: String!, $emails: [String!]!) {
-    currentUser {
-      privateKey
-    }
-    environments(projectId: $projectId) {
-      name
-      data
-      readAccess {
-        emails
-        publicKey
-      }
-    }
-    users(emails: $emails) {
-      emails
-      publicKey
-    }
-  }
-`;
-
-const shareEnvironment = gql`
-  mutation shareEnvironment(
-    $data: String!,
-    $projectId: String!,
-    $name: String!,
-    $emails: [String!]!
-  ) {
-    shareEnvironment(data: $data, projectId: $projectId, name: $name, emails: $emails) {
-      name
-    }
-  }
-`;
+import SHARE_ENVIRONMENT_MUTATION from '../graphql/ShareEnvironment';
+import ENVIRONMENTS_QUERY from '../graphql/EnvironmentsShare';
 
 const share = async ({envName, email}) => {
   if (! envName || ! email) {
@@ -45,7 +13,7 @@ const share = async ({envName, email}) => {
 
   try {
     const {data: {environments, users, currentUser}} = await graphql.query({
-      query: environmentsQuery,
+      query: ENVIRONMENTS_QUERY,
       variables: {
         projectId: Settings.projectId,
         emails: [email],
@@ -81,7 +49,7 @@ const share = async ({envName, email}) => {
     emails.add(email);
 
     await graphql.mutate({
-      mutation: shareEnvironment,
+      mutation: SHARE_ENVIRONMENT_MUTATION,
       variables: {
         name: environment.name,
         projectId: Settings.projectId,

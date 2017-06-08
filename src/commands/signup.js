@@ -1,4 +1,3 @@
-import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import RegEx from '../modules/regex';
 import {generateKeys} from '../modules/pgp';
@@ -6,6 +5,7 @@ import {generateSignUpHash} from '../modules/crypto';
 import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
 import prompt from '../modules/prompt';
 import UserError from '../modules/UserError';
+import SIGN_UP_USER_MUTATION from '../graphql/SignUpUser';
 
 const promptSchema = {
   properties: {
@@ -20,22 +20,6 @@ const promptSchema = {
     },
   },
 };
-
-const signUpMutation = gql`
-  mutation signUpMutation(
-    $email: String!,
-    $password: String!,
-    $privateKey: String!,
-    $publicKey: String!
-  ) {
-    createUser(
-      email: $email,
-      password: $password,
-      privateKey: $privateKey,
-      publicKey: $publicKey,
-    )
-  }
-`;
 
 const signup = async ({email}) => {
   if (typeof email !== 'string') {
@@ -62,7 +46,7 @@ const signup = async ({email}) => {
         privateKey: privateKeyArmored,
         publicKey: publicKeyArmored,
       },
-      mutation: signUpMutation,
+      mutation: SIGN_UP_USER_MUTATION,
     });
     console.log(JSON.stringify(data, null, 2));
 

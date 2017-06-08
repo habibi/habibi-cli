@@ -1,15 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import {projectDir} from '../modules/filesystem';
 import UserError from '../modules/UserError';
-
-const createProject = gql`
-  mutation createProject {
-    createProject
-  }
-`;
+import CREATE_PROJECT_MUTATION from '../graphql/CreateProject';
 
 const init = async () => {
   if (projectDir && fs.existsSync(path.resolve(projectDir, '.habibi.json'))) {
@@ -17,7 +11,7 @@ const init = async () => {
   }
 
   const result = await graphql.mutate({
-    mutation: createProject,
+    mutation: CREATE_PROJECT_MUTATION,
   });
 
   fs.writeFileSync('.habibi.json', JSON.stringify({

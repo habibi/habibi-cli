@@ -1,24 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import {decrypt} from '../modules/pgp';
 import {getPgpPassphrase} from '../modules/configuration';
 import Settings from '../modules/settings';
 import {projectDir} from '../modules/filesystem';
 import UserError from '../modules/UserError';
-
-const environmentsQuery = gql`
-  query environmentsQuery($projectId: String!) {
-    currentUser {
-      privateKey
-    }
-    environments(projectId: $projectId) {
-      name
-      data
-    }
-  }
-`;
+import ENVIRONMENTS_QUERY from '../graphql/Environments';
 
 const decryptAndStore = async (ciphertext, fileName, privateKey) => {
   const {data: envFile} = await decrypt({
@@ -48,7 +36,7 @@ const pull = async ({envName}) => {
   try {
     // Retrieve the encrypted data
     const {data: {environments, currentUser}} = await graphql.query({
-      query: environmentsQuery,
+      query: ENVIRONMENTS_QUERY,
       variables: {
         projectId: Settings.projectId,
       },

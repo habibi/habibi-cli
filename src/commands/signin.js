@@ -1,10 +1,10 @@
-import gql from 'graphql-tag';
 import graphql from '../modules/graphql';
 import RegEx from '../modules/regex';
 import {generateSignUpHash} from '../modules/crypto';
 // import {getPgpPassphrase, getApiToken} from './configuration';
 import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
 import prompt from '../modules/prompt';
+import SIGN_IN_USER_MUTATION from '../graphql/SignInUser';
 
 const schema = {
   properties: {
@@ -20,12 +20,6 @@ const schema = {
   },
 };
 
-const signInMutation = gql`
-  mutation signInMutation($email: String!, $password: String!) {
-    signIn(email: $email, password: $password)
-  }
-`;
-
 const signin = async () => {
   try {
     const input  = await prompt(schema);
@@ -35,7 +29,7 @@ const signin = async () => {
         email: input.email,
         password: generateSignUpHash(input.password),
       },
-      mutation: signInMutation,
+      mutation: SIGN_IN_USER_MUTATION,
     });
 
     console.log(JSON.stringify(data, null, 2));
