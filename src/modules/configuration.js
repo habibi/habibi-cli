@@ -17,16 +17,20 @@ const getApiToken = () => {
 };
 
 const storePgpPassphrase = (pgpPassphrase) => {
-  assert(typeof pgpPassphrase === 'string');
+  assert(typeof pgpPassphrase === 'string' || pgpPassphrase === null);
+
+  if (typeof pgpPassphrase === 'string') {
+    pgpPassphrase = generatePGPHash(pgpPassphrase);
+  }
 
   const netrcData = netrc() || {};
   netrcData['habibi.one'] = netrcData['habibi.one'] || {};
-  netrcData['habibi.one'].pgpPassphrase = generatePGPHash(pgpPassphrase);
+  netrcData['habibi.one'].pgpPassphrase = pgpPassphrase;
   netrc.save(netrcData);
 };
 
 const storeApiToken = (password) => {
-  assert(typeof password === 'string');
+  assert(typeof password === 'string' || password === null);
 
   const netrcData = netrc() || {};
   netrcData['habibi.one'] = netrcData['habibi.one'] || {};

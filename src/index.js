@@ -4,9 +4,9 @@ import {argv} from 'yargs';
 import UserError from './modules/UserError';
 import push from './commands/push';
 import pull from './commands/pull';
-import signin from './commands/signin';
-import signup from './commands/signup';
-import notImplemented from './commands/not-implemented';
+import signIn from './commands/sign-in';
+import signUp from './commands/sign-up';
+import signOut from './commands/sign-out';
 import init from './commands/init';
 import add from './commands/add';
 import share from './commands/share';
@@ -32,15 +32,15 @@ import unshare from './commands/unshare';
         break;
 
       case 'signup':
-        await signup({email: argv._[1]});
+        await signUp({email: argv._[1]});
         break;
 
       case 'signin':
-        await signin();
+        await signIn();
         break;
 
       case 'signout':
-        await notImplemented();
+        await signOut();
         break;
 
       case 'share':
