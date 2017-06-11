@@ -9,7 +9,7 @@
   "scripts": {
     "watch": "babel src -d dist --source-maps inline --watch",
     "build": "babel src -d dist --source-maps inline",
-    "lint": "eslint . || true",
+    "lint": "eslint src",
     "postinstall": "npm run build"
   },
   "repository": {

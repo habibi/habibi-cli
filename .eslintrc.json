@@ -11,7 +11,6 @@
     "import"
   ],
   "env": {
-    "browser": true,
     "node": true,
     "es6": true
   },
@@ -52,7 +51,10 @@
     "arrow-spacing": "error",
     "spaced-comment": ["error", "always", {"block": {"balanced": true}}],
     "camelcase": "error",
-    "import/no-unresolved": ["error", {"ignore": ["^meteor/"]}],
+    "no-trailing-spaces": "error",
+    "no-restricted-syntax": ["error", "ForInStatement"],
+    "one-var": ["error", "never"],
+    "import/no-unresolved": "error",
     "import/first": "error",
     "import/no-duplicates": "error",
     "import/extensions": "error",
