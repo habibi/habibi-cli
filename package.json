@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/habibi/habibi.git"
+    "url": "git+https://github.com/habibi/habibi-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/habibi/habibi/issues"
+    "url": "https://github.com/habibi/habibi-cli/issues"
   },
-  "homepage": "https://github.com/habibi/habibi#readme",
+  "homepage": "https://github.com/habibi/habibi-cli#readme",
   "dependencies": {
     "apollo-client": "1.2.0",
     "babel-cli": "6.24.1",

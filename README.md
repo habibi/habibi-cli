@@ -47,7 +47,7 @@ habibi unshare <environment-name> <email>
 3. Run the following commands:
 
 ```sh
-git clone https://github.com/habibi/habibi.git
+git clone https://github.com/habibi/habibi-cli.git
 cd habibi
 npm link
 npm run watch
