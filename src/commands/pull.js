@@ -5,7 +5,7 @@ import {decrypt} from '../modules/pgp';
 import {getPgpPassphrase} from '../modules/configuration';
 import Settings from '../modules/settings';
 import {projectDir} from '../modules/filesystem';
-import UserError from '../modules/UserError';
+import UserError from '../modules/user-error';
 import ENVIRONMENTS_QUERY from '../graphql/Environments';
 
 const decryptAndStore = async (ciphertext, fileName, privateKey) => {

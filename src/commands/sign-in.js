@@ -4,7 +4,7 @@ import {generateSignUpHash} from '../modules/crypto';
 // import {getPgpPassphrase, getApiToken} from './configuration';
 import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
 import prompt from '../modules/prompt';
-import UserError from '../modules/UserError';
+import UserError from '../modules/user-error';
 import SIGN_IN_USER_MUTATION from '../graphql/SignInUser';
 
 const schema = {

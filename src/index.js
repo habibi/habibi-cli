@@ -1,7 +1,7 @@
 import 'source-map-support/register';
 import 'isomorphic-fetch';
 import {argv} from 'yargs';
-import UserError from './modules/UserError';
+import UserError from './modules/user-error';
 import push from './commands/push';
 import pull from './commands/pull';
 import signIn from './commands/sign-in';

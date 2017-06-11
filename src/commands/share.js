@@ -2,7 +2,7 @@ import graphql from '../modules/graphql';
 import Settings from '../modules/settings';
 import {decrypt, encrypt} from '../modules/pgp';
 import {getPgpPassphrase} from '../modules/configuration';
-import UserError from '../modules/UserError';
+import UserError from '../modules/user-error';
 import SHARE_ENVIRONMENT_MUTATION from '../graphql/ShareEnvironment';
 import ENVIRONMENTS_QUERY from '../graphql/EnvironmentsShare';
 

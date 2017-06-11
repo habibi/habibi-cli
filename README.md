@@ -48,7 +48,7 @@ habibi unshare <environment-name> <email>
 
 ```sh
 git clone https://github.com/habibi/habibi-cli.git
-cd habibi
+cd habibi-cli
 npm link
 npm run watch
 ```

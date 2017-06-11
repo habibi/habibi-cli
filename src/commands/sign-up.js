@@ -4,7 +4,7 @@ import {generateKeys} from '../modules/pgp';
 import {generateSignUpHash} from '../modules/crypto';
 import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
 import prompt from '../modules/prompt';
-import UserError from '../modules/UserError';
+import UserError from '../modules/user-error';
 import SIGN_UP_USER_MUTATION from '../graphql/SignUpUser';
 
 const promptSchema = {

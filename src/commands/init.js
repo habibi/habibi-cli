@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import graphql from '../modules/graphql';
 import {projectDir} from '../modules/filesystem';
-import UserError from '../modules/UserError';
+import UserError from '../modules/user-error';
 import CREATE_PROJECT_MUTATION from '../graphql/CreateProject';
 
 const init = async () => {

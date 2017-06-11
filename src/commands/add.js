@@ -4,7 +4,7 @@ import graphql from '../modules/graphql';
 import {encrypt} from '../modules/pgp';
 import Settings from '../modules/settings';
 import {projectDir} from '../modules/filesystem';
-import UserError from '../modules/UserError';
+import UserError from '../modules/user-error';
 import CURRENT_USER_QUERY from '../graphql/CurrentUser';
 import CREATE_ENVIRONMENT_MUTATION from '../graphql/CreateEnvironment';
 
