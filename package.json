@@ -20,11 +20,14 @@
     "url": "https://github.com/habibi/habibi-cli/issues"
   },
   "homepage": "https://github.com/habibi/habibi-cli#readme",
+  "engines": {
+    "node": "7.x.x"
+  },
   "dependencies": {
-    "apollo-client": "1.2.0",
+    "apollo-client": " 1.4.2",
     "babel-cli": "6.24.1",
     "babel-plugin-transform-class-properties": "6.24.1",
-    "babel-preset-env": "1.4.0",
+    "babel-preset-env": "1.5.2",
     "find-parent-dir": "0.3.0",
     "isomorphic-fetch": "2.2.1",
     "netrc": "0.1.4",
