@@ -1,12 +1,11 @@
 import assert from 'assert';
 import netrc from 'netrc';
-import {generatePGPHash} from './crypto';
 
 // Returns a string
 const getPgpPassphrase = () => {
   const netrcData = netrc() || {};
   netrcData['habibi.one'] = netrcData['habibi.one'] || {};
-  return netrcData['habibi.one'].pgpPassphrase;
+  return netrcData['habibi.one']['pgp-passphrase'];
 };
 
 // Returns a string
@@ -16,26 +15,24 @@ const getApiToken = () => {
   return netrcData['habibi.one'].password;
 };
 
-const storePgpPassphrase = (pgpPassphrase) => {
+const storeCredentials = ({login, apiToken, pgpPassphrase}) => {
+  assert(typeof apiToken === 'string' || apiToken === null);
   assert(typeof pgpPassphrase === 'string' || pgpPassphrase === null);
-
-  if (typeof pgpPassphrase === 'string') {
-    pgpPassphrase = generatePGPHash(pgpPassphrase);
-  }
+  assert(typeof login === 'string' || login === null);
 
   const netrcData = netrc() || {};
-  netrcData['habibi.one'] = netrcData['habibi.one'] || {};
-  netrcData['habibi.one'].pgpPassphrase = pgpPassphrase;
+  netrcData['habibi.one'] = {
+    'login': login,
+    'password': apiToken,
+    'pgp-passphrase': pgpPassphrase,
+  };
   netrc.save(netrcData);
 };
 
-const storeApiToken = (password) => {
-  assert(typeof password === 'string' || password === null);
-
+const removeCredentials = () => {
   const netrcData = netrc() || {};
-  netrcData['habibi.one'] = netrcData['habibi.one'] || {};
-  netrcData['habibi.one'].password = password;
+  delete netrcData['habibi.one'];
   netrc.save(netrcData);
 };
 
-export {getPgpPassphrase, getApiToken, storePgpPassphrase, storeApiToken};
+export {getPgpPassphrase, getApiToken, storeCredentials, removeCredentials};

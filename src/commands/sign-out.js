@@ -1,9 +1,8 @@
-import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
+import {removeCredentials} from '../modules/configuration';
 
 const signin = async () => {
   try {
-    storeApiToken(null);
-    storePgpPassphrase(null);
+    removeCredentials();
 
   } catch (e) {
     console.error(e);

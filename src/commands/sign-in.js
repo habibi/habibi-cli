@@ -1,8 +1,8 @@
 import graphql from '../modules/graphql';
 import RegEx from '../modules/regex';
-import {generateSignUpHash} from '../modules/crypto';
+import {generateSignUpHash, generatePGPHash} from '../modules/crypto';
 // import {getPgpPassphrase, getApiToken} from './configuration';
-import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
+import {storeCredentials} from '../modules/configuration';
 import prompt from '../modules/prompt';
 import UserError from '../modules/user-error';
 import SIGN_IN_USER_MUTATION from '../graphql/SignInUser';
@@ -43,8 +43,11 @@ const signin = async ({email}) => {
 
     console.log(JSON.stringify(data, null, 2));
 
-    storeApiToken(data.signIn);
-    storePgpPassphrase(input.password);
+    storeCredentials({
+      login: email,
+      apiToken: data.signIn,
+      pgpPassphrase: generatePGPHash(input.password),
+    });
 
   } catch (e) {
     console.error(e);

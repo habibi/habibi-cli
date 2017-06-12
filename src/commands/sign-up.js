@@ -1,8 +1,8 @@
 import graphql from '../modules/graphql';
 import RegEx from '../modules/regex';
 import {generateKeys} from '../modules/pgp';
-import {generateSignUpHash} from '../modules/crypto';
-import {storeApiToken, storePgpPassphrase} from '../modules/configuration';
+import {generateSignUpHash, generatePGPHash} from '../modules/crypto';
+import {storeCredentials} from '../modules/configuration';
 import prompt from '../modules/prompt';
 import UserError from '../modules/user-error';
 import SIGN_UP_USER_MUTATION from '../graphql/SignUpUser';
@@ -50,8 +50,11 @@ const signup = async ({email}) => {
     });
     console.log(JSON.stringify(data, null, 2));
 
-    storeApiToken(data.createUser);
-    storePgpPassphrase(input.password);
+    storeCredentials({
+      login: email,
+      apiToken: data.createUser,
+      pgpPassphrase: generatePGPHash(input.password),
+    });
 
   } catch (e) {
     if (e.graphQLErrors && e.graphQLErrors[0].message === 'duplicate-email') {
