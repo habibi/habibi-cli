@@ -2,7 +2,7 @@ import ApolloClient, {createNetworkInterface} from 'apollo-client';
 import {getApiToken} from './configuration';
 
 const networkInterface = createNetworkInterface({
-  uri: 'http://localhost:3000/graphql',
+  uri: 'https://habibi.one/graphql',
 });
 
 networkInterface.use([{
@@ -14,7 +14,11 @@ networkInterface.use([{
     // Read the API token from the netrc file
     const token = getApiToken();
 
-    req.options.headers.authorization = `Bearer ${token}`;
+    // Only send the authentication header if a local API token exists
+    if (token) {
+      req.options.headers.authorization = `Bearer ${token}`;
+    }
+
     next();
   },
 }]);
